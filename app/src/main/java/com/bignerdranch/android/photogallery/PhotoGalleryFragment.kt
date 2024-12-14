@@ -1,16 +1,16 @@
 package com.bignerdranch.android.photogallery
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-private const val TAG = "PhotoGalleryFragment"
+//private const val TAG = "PhotoGalleryFragment"
 
 class PhotoGalleryFragment : Fragment() {
 
@@ -41,8 +41,32 @@ class PhotoGalleryFragment : Fragment() {
         photoGalleryViewModel.galleryItemLiveData.observe(
             viewLifecycleOwner
         ) { galleryItems ->
-                Log.d(TAG, "Have gallery items from ViewModel $galleryItems")
-                // Обновить данные, поддерживающие представление утилизатора
+            photoRecyclerView.adapter = PhotoAdapter(galleryItems)
+        }
+    }
+
+    private class PhotoHolder(itemTextView: TextView)
+        : RecyclerView.ViewHolder(itemTextView) {
+
+        val bindTitle: (CharSequence) -> Unit = itemTextView::setText
+    }
+
+    private class PhotoAdapter(private val galleryItems: List<GalleryItem>)
+        : RecyclerView.Adapter<PhotoHolder>() {
+
+        override fun onCreateViewHolder(
+            parent: ViewGroup,
+            viewType: Int
+        ): PhotoHolder {
+            val textView = TextView(parent.context)
+            return PhotoHolder(textView)
+        }
+
+        override fun getItemCount(): Int = galleryItems.size
+
+        override fun onBindViewHolder(holder: PhotoHolder, position: Int) {
+            val galleryItem = galleryItems[position]
+            holder.bindTitle(galleryItem.title)
         }
     }
 
