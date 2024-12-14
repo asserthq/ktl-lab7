@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.bignerdranch.android.photogallery"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.bignerdranch.android.photogallery"
