@@ -6,26 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bignerdranch.android.photogallery.api.FlickrFetcher
 
 private const val TAG = "PhotoGalleryFragment"
 
 class PhotoGalleryFragment : Fragment() {
 
+    private lateinit var photoGalleryViewModel: PhotoGalleryViewModel
     private lateinit var photoRecyclerView: RecyclerView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val flickrLiveData: LiveData<List<GalleryItem>> = FlickrFetcher().fetchPhotos()
-        flickrLiveData.observe(
-            this
-        ) { galleryItems ->
-            Log.d(TAG, "Response received: $galleryItems")
-        }
+        photoGalleryViewModel = ViewModelProvider(this)[PhotoGalleryViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -37,6 +33,17 @@ class PhotoGalleryFragment : Fragment() {
         photoRecyclerView = view.findViewById(R.id.photoRecyclerView)
         photoRecyclerView.layoutManager = GridLayoutManager(context, 3)
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        photoGalleryViewModel.galleryItemLiveData.observe(
+            viewLifecycleOwner
+        ) { galleryItems ->
+                Log.d(TAG, "Have gallery items from ViewModel $galleryItems")
+                // Обновить данные, поддерживающие представление утилизатора
+        }
     }
 
     companion object {
